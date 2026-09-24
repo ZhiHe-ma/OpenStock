@@ -488,7 +488,7 @@
     background-color: #9095A1;
 }
 
-/* QuantAgent read-only research surface */
+/* QuantAgent research surface */
 .research-page {
     display: flex;
     flex-direction: column;
