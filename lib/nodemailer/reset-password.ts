@@ -12,7 +12,7 @@ export const sendPasswordResetEmail = async (
     { email, name, resetUrl }: { email: string; name?: string | null; resetUrl: string }
 ) => {
     try {
-        if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+        if (!transporter || !process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
             throw new Error('Email credentials not configured');
         }
 
