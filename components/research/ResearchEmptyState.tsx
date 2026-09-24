@@ -10,7 +10,7 @@ export function ResearchEmptyState() {
       </div>
       <div className="research-empty-boundary">
         <ShieldCheck aria-hidden="true" />
-        <span>This surface issues GET requests only. It cannot submit, cancel, resume, or rerun research.</span>
+        <span>Existing results are read-only. The separate controlled task pilot uses one registered offline fixture only.</span>
       </div>
     </div>
   )

@@ -50,7 +50,7 @@ OpenStock is an open-source alternative to expensive market platforms. Track rea
 
 ## QuantAgent research results
 
-The authenticated `/research` page can read an existing QuantAgent run summary and integrity-checked Markdown report. It does not expose a task submission, cancellation, resume, rerun, or trading action.
+The authenticated `/research` page can read an existing QuantAgent run summary and integrity-checked Markdown report. An optional, separately configured pilot can submit one server-registered offline thesis fixture, inspect its v2 task status, and request cooperative cancellation. It does not accept browser-selected files, plugins, models, arbitrary requests, automatic resume, or trading actions.
 
 Configure these variables on the OpenStock server only:
 
@@ -63,6 +63,16 @@ QUANTAGENT_ALLOWED_USER_ID=replace-with-the-authorized-better-auth-user-id
 Research access is disabled unless `QUANTAGENT_ALLOWED_USER_ID` exactly matches the signed-in Better Auth `user.id`. Use the immutable ID, not an email address; this single-account pilot does not map multiple OpenStock users to QuantAgent owners. Other accounts cannot trigger a QuantAgent read, even if they know a run ID. Keep this setting server-only.
 
 The browser never receives the bearer token. For the allowed account, OpenStock sends two uncached, non-redirecting `GET` requests from the Next.js server to QuantAgent v1. Plain HTTP is accepted only for literal loopback IPs (`127.0.0.1` or `[::1]`); hostnames, including `localhost`, must use HTTPS.
+
+To enable the optional controlled task pilot, start QuantAgent's `serve-research` service with a registered offline thesis fixture (not the read-only `serve-results` service). Add these server-only variables, using the fixture's registered name, raw-byte SHA-256, and `research_request.request_id`:
+
+```dotenv
+QUANTAGENT_SUBMIT_FIXTURE_ID=thesis
+QUANTAGENT_SUBMIT_FIXTURE_SHA256=replace-with-64-lowercase-hex-characters
+QUANTAGENT_SUBMIT_REQUEST_ID=request.btc.thesis.20260922
+```
+
+OpenStock constructs the request body and a stable idempotency key on the server. Repeated clicks or retries with the same configured account and fixture return the same task; refreshing `/research/tasks/{task-id}` only reads status. A new logical run requires an intentional operator configuration change. The task service is single-process and offline-only; cancellation is cooperative at recipe-step boundaries, and interrupted tasks do not resume automatically. This pilot is not a general research submission or production multi-user queue. The browser calls only same-origin OpenStock routes and never receives the QuantAgent bearer token.
 
 For an optional local contract check, start QuantAgent with a completed thesis run, set `QUANTAGENT_LIVE_RUN_ID` to that run ID alongside the two server variables above, then run `npm test -- __tests__/quantagent-live-contract.test.ts`. The test performs real authenticated reads and checks report integrity and public error mapping; it is skipped when the three variables are not set. Use test-only credentials and do not commit them.
 

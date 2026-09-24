@@ -15,7 +15,7 @@ export function ResearchFrame({
     <section className="research-page">
       <header className="research-page-heading">
         <h1>Research</h1>
-        <p>Review an existing QuantAgent run without starting a new task.</p>
+        <p>Review a verified result or run the server-registered offline research pilot.</p>
       </header>
       {showLocator && <RunLocator defaultRunId={runId} />}
       {children}
